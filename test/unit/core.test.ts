@@ -6,7 +6,7 @@ import { cleanEnv, resolveInstall, resolveInt } from '../../src/config.js';
 import { resolveOutputPath, sameFile, toEnginePath } from '../../src/paths.js';
 import { substitute } from '../../src/tools/advanced.js';
 import { RASTER_INPUTS, collectInputs, formatOfPath } from '../../src/tools/common.js';
-import { seriesNames } from '../../src/tools/vector.js';
+import { parseChartCsv, seriesNames } from '../../src/tools/vector.js';
 
 describe('config', () => {
   it('treats unfilled MCPB placeholders as unset', () => {
@@ -71,8 +71,20 @@ describe('chart series', () => {
   it('reads series names from the CSV header, honouring quotes', () => {
     expect(seriesNames(',Ventas,Costos\nEne,1,2')).toEqual(['Ventas', 'Costos']);
     expect(seriesNames(',"A, B",C\r\nx,1,2')).toEqual(['A, B', 'C']);
-    expect(seriesNames(',"Dicho ""x""",Y')).toEqual(['Dicho "x"', 'Y']);
-    expect(seriesNames(',Solo')).toEqual(['Solo']);
+    expect(seriesNames(',"Dicho ""x""",Y\nz,1,2')).toEqual(['Dicho "x"', 'Y']);
+    expect(seriesNames(',Solo\nx,1')).toEqual(['Solo']);
+  });
+  it('turns the CSV into the arrays the engine keeps intact', () => {
+    expect(parseChartCsv(',"Ing, netos",Gastos\n"Q1, ene-mar",12,8\nQ2, 18 ,\n\n')).toEqual({
+      series: ['Ing, netos', 'Gastos'],
+      categories: ['Q1, ene-mar', 'Q2'],
+      rows: [
+        [12, 8],
+        [18, 0],
+      ],
+    });
+    expect(() => parseChartCsv(',A')).toThrow(/at least one category/);
+    expect(() => parseChartCsv(',A\nx,diez')).toThrow(/not a number/);
   });
 });
 

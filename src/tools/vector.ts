@@ -45,12 +45,15 @@ export const elementSchema = z.object({
   color: colorSchema.optional().describe('text colour.'),
   image_path: z.string().optional().describe('image: absolute PNG, JPEG, SVG, PDF, EPS... path, fitted into x/y/width/height (aspect kept) or centred.'),
   chart_type: z.enum(['column', 'stackedColumn', 'bar', 'stackedBar', 'line', 'area', 'scatter', 'pie', 'radar']).optional(),
-  csv: z.string().optional().describe('chart data: first row an empty cell then series names; then one row per category, e.g. ",Sales\\nJan,10\\nFeb,25".'),
+  csv: z.string().optional().describe('chart data: first row an empty cell then series names; then one row per category, e.g. ",Sales\\nJan,10\\nFeb,25". Names with commas go in double quotes (",\\"Costs, net\\",Sales").'),
+  series: z.array(z.string()).max(64).optional().describe('chart data without CSV: series names.'),
+  categories: z.array(z.string()).max(500).optional().describe('chart data without CSV: category labels.'),
+  rows: z.array(z.array(z.number())).max(500).optional().describe('chart data without CSV: one array of values per category, in series order.'),
   colors: z
     .array(z.string())
     .max(64)
     .optional()
-    .describe('chart: one "#rrggbb" per series, in the order of the CSV header (default: black and greys). Also colours the legend swatches.'),
+    .describe('chart: one "#rrggbb" per series, in series order (default: black and greys). Also colours the legend swatches.'),
   text_color: z.string().optional().describe('chart: colour of the axes, tick and category labels and legend text (default black; use a light colour on dark backgrounds).'),
   opacity: z.number().min(0).max(100).optional(),
   effects: z.array(effectSchema).max(20).optional().describe('Live effects on this element.'),
@@ -71,16 +74,15 @@ function need(el: Element, ...keys: (keyof Element)[]): void {
   if (missing.length) throw new Error(`${el.type} needs ${missing.join(', ')}.`);
 }
 
-/** Series names from a chart CSV header (`,Sales,"Costs, net"` → ["Sales", "Costs, net"]); quotes are honoured. */
-export function seriesNames(csv: string): string[] {
-  const header = csv.split(/\r?\n/)[0] ?? '';
+/** One CSV line split into cells; "quoted, cells" and "" escapes are honoured. */
+function csvCells(line: string): string[] {
   const cells: string[] = [];
   let cur = '';
   let quoted = false;
-  for (let i = 0; i < header.length; i++) {
-    const ch = header[i];
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
     if (quoted) {
-      if (ch === '"' && header[i + 1] === '"') {
+      if (ch === '"' && line[i + 1] === '"') {
         cur += '"';
         i++;
       } else if (ch === '"') quoted = false;
@@ -92,7 +94,46 @@ export function seriesNames(csv: string): string[] {
     } else cur += ch;
   }
   cells.push(cur.trim());
-  return cells.slice(1);
+  return cells;
+}
+
+export interface ChartData {
+  series: string[];
+  categories: string[];
+  rows: number[][];
+}
+
+/**
+ * Chart CSV → series / categories / rows. VectorCraft's own CSV reader splits on every comma, even inside
+ * quotes, so the connector parses the CSV itself and hands the engine plain arrays: names with commas survive.
+ * First row: an empty cell then the series names; then one row per category: label, values. Blank values are 0.
+ */
+export function parseChartCsv(csv: string): ChartData {
+  const lines = csv.split(/\r?\n/).filter((l) => l.trim().length);
+  if (lines.length < 2) throw new Error('chart csv needs a header row (an empty cell, then series names) and at least one category row.');
+  const series = csvCells(lines[0]).slice(1);
+  if (!series.length) throw new Error('chart csv header has no series names (it should look like ",Sales,Costs").');
+  const categories: string[] = [];
+  const rows: number[][] = [];
+  for (const line of lines.slice(1)) {
+    const [label, ...values] = csvCells(line);
+    categories.push(label);
+    rows.push(
+      series.map((_, i) => {
+        const v = (values[i] ?? '').replace(/\s/g, '');
+        if (v === '') return 0;
+        const n = Number(v);
+        if (!Number.isFinite(n)) throw new Error(`chart csv: "${values[i]}" (category "${label}", series "${series[i]}") is not a number.`);
+        return n;
+      }),
+    );
+  }
+  return { series, categories, rows };
+}
+
+/** Series names of a chart CSV, as the chart will name its series groups. */
+export function seriesNames(csv: string): string[] {
+  return parseChartCsv(csv).series;
 }
 
 interface Node {
@@ -206,10 +247,14 @@ export async function addElement(s: VectorCraftSession, el: Element): Promise<{ 
       break;
     }
     case 'chart': {
-      need(el, 'x', 'y', 'width', 'height', 'csv');
-      const r = await s.json('create_graph', { type: el.chart_type ?? 'column', x: el.x, y: el.y, width: el.width, height: el.height, csv: el.csv });
+      need(el, 'x', 'y', 'width', 'height');
+      let data: ChartData;
+      if (el.csv) data = parseChartCsv(el.csv);
+      else if (el.series?.length && el.categories?.length && el.rows?.length) data = { series: el.series, categories: el.categories, rows: el.rows };
+      else throw new Error('chart needs csv, or series + categories + rows.');
+      const r = await s.json('create_graph', { type: el.chart_type ?? 'column', x: el.x, y: el.y, width: el.width, height: el.height, ...data });
       ids = [r['id']];
-      if (el.colors?.length || el.text_color) await colorChart(s, r['id'], seriesNames(el.csv!), el.colors ?? [], el.text_color);
+      if (el.colors?.length || el.text_color) await colorChart(s, r['id'], data.series, el.colors ?? [], el.text_color);
       break;
     }
   }

@@ -141,7 +141,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + 단일 파일 번들(dist/bundle.cjs)
 npm test            # 단위 테스트(Windows, macOS, Linux 경로 처리)
-npm run test:e2e    # 실제 MCP stdio를 통한 18개 엔드투엔드 검사(합성 PNG와 디자인)
+npm run test:e2e    # 실제 MCP stdio를 통한 19개 엔드투엔드 검사(합성 PNG와 디자인)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 ```
 

@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.2] - 2026-10-09
+### Fixed
+- Chart series and category names with commas. VectorCraft's own CSV reader splits on every comma, even inside
+  quotes, so `,"Costs, net",Sales` became three series ("Costs", "net", "Sales") and the 1.0.1 note below about
+  quotes did not hold. The connector now parses the chart CSV itself (quotes and `""` escapes honoured, blank
+  values as 0, a clear error for non-numbers) and gives the engine plain series / categories / rows arrays, which it
+  keeps intact.
+### Added
+- Chart data can also be given without CSV: `series`, `categories` and `rows` (one array of values per category).
+### Verified
+- Windows 11 and Debian 12 (Docker): 19/19 end-to-end checks each (new: names with commas, from quoted CSV and
+  from arrays, keep their names and colours).
+
 ## [1.0.1] - 2026-10-09
 ### Added
 - Chart colours in `create_design` and `edit_vector` (`add`): `colors` gives one colour per series in the order of
@@ -7,7 +20,8 @@
   category labels and the legend text, so charts read well on dark backgrounds. Works for column, bar, stacked,
   line, area, pie, scatter and radar charts; each series is recoloured inside its own group, so the first series'
   black never touches the labels.
-- CSV series names honour quotes (`,"Costs, net",Sales`).
+- CSV series names honour quotes (`,"Costs, net",Sales`) — only in the connector's own colour mapping; the engine
+  still split them, fixed in 1.0.2.
 ### Verified
 - Windows 11 and Debian 12 (Docker): 18/18 end-to-end checks each (new: per-series chart colours on a dark background).
 

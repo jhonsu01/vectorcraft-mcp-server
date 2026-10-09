@@ -1,6 +1,6 @@
 {
   "name": "vectorcraft-mcp-server",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "MCP server for VectorCraft: vectorize images, convert between 20 vector and raster formats, design with shapes, text, effects and charts, recolor and export artwork with VectorCraft's own engine, from Claude (Windows, macOS, Linux).",
   "type": "module",
   "main": "dist/index.js",

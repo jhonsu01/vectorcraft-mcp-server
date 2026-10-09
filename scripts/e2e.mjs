@@ -111,6 +111,22 @@ const chartColors = chart.success ? await call('edit_vector', { input_path: char
 const hexes = (chartColors.colors ?? []).map((c) => c.hex);
 check(chart.success && ['#38bdf8', '#f97316', '#22c55e', '#e2e8f0'].every((h) => hexes.includes(h)) && !hexes.includes('#000000') && !hexes.includes('#8c8c8c'), `chart colours per series + light axes/legend: ${hexes.join(' ')}`);
 
+const quoted = await call('create_design', {
+  name: 'grafico-comas',
+  width: 520,
+  height: 300,
+  elements: [
+    { type: 'chart', chart_type: 'line', x: 30, y: 30, width: 300, height: 230, csv: ',"Ingresos, netos",Gastos\n"Q1, ene-mar",12,8\nQ2,18,10', colors: ['#0891b2', '#ea580c'] },
+    { type: 'chart', chart_type: 'pie', x: 360, y: 60, width: 140, height: 140, series: ['Sí, claro', 'No'], categories: ['Encuesta'], rows: [[70, 30]], colors: ['#16a34a', '#dc2626'] },
+  ],
+  formats: ['svg'],
+  output_dir: join(out, 'design'),
+  preview: false,
+});
+const qSvg = quoted.success ? readFileSync(quoted.outputs[0].path, 'utf-8') : '';
+const qColors = quoted.success ? (await call('edit_vector', { input_path: quoted.outputs[0].path, list_colors: true })).colors.map((c) => c.hex) : [];
+check(quoted.success && qSvg.includes('Ingresos, netos') && qSvg.includes('Q1, ene-mar') && qSvg.includes('Sí, claro') && ['#0891b2', '#ea580c', '#16a34a', '#dc2626'].every((h) => qColors.includes(h)), 'series and categories with commas (quoted CSV and arrays) keep their names and colours');
+
 const native = design.outputs?.find((o) => o.format === 'vectorcraft')?.path;
 const info = await call('get_vector_info', { input_path: native });
 check(info.success && info.artboards?.[0]?.rect?.[2] === 800 && info.info?.title === 'Póster e2e' && Object.keys(info.kinds ?? {}).length >= 3, `info: ${JSON.stringify(info.kinds)}`);
