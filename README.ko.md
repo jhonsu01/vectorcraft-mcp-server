@@ -78,7 +78,8 @@
   "background": "#ff6a00",
   "elements": [
     { "type": "star", "cx": 540, "cy": 420, "radius1": 260, "radius2": 120, "fill": "#ffd23f", "effects": [ { "effect": "stylize.dropShadow" } ] },
-    { "type": "text", "text": "SALE", "x": 330, "y": 880, "size": 180, "color": "#ffffff" }
+    { "type": "text", "text": "SALE", "x": 330, "y": 880, "size": 180, "color": "#ffffff" },
+    { "type": "chart", "chart_type": "column", "x": 640, "y": 900, "width": 380, "height": 160, "csv": ",2025,2026\nQ1,12,18\nQ2,15,24", "colors": ["#ffffff", "#ffd23f"], "text_color": "#ffffff" }
   ],
   "formats": ["svg", "png", "vectorcraft"],
   "output_dir": "/home/me/designs"
@@ -140,7 +141,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + 단일 파일 번들(dist/bundle.cjs)
 npm test            # 단위 테스트(Windows, macOS, Linux 경로 처리)
-npm run test:e2e    # 실제 MCP stdio를 통한 17개 엔드투엔드 검사(합성 PNG와 디자인)
+npm run test:e2e    # 실제 MCP stdio를 통한 18개 엔드투엔드 검사(합성 PNG와 디자인)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 ```
 

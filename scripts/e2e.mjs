@@ -97,6 +97,20 @@ check(design.success && design.outputs?.length === 4 && design.outputs.every((o)
 const svgText = design.success ? readFileSync(design.outputs[0].path, 'utf-8') : '';
 check(svgText.includes('ñandú') && svgText.includes('viewBox="0 0 800 600"'), 'SVG keeps the text (ñ) and the 800×600 artboard');
 
+const chart = await call('create_design', {
+  name: 'grafico-color',
+  width: 520,
+  height: 300,
+  background: '#0f172a',
+  elements: [{ type: 'chart', chart_type: 'column', x: 30, y: 30, width: 380, height: 230, csv: ',Ventas,Costos,Margen\nEne,10,6,4\nFeb,25,12,13\nMar,18,9,9', colors: ['#38bdf8', '#f97316', '#22c55e'], text_color: '#e2e8f0' }],
+  formats: ['svg'],
+  output_dir: join(out, 'design'),
+  preview: false,
+});
+const chartColors = chart.success ? await call('edit_vector', { input_path: chart.outputs[0].path, list_colors: true }) : {};
+const hexes = (chartColors.colors ?? []).map((c) => c.hex);
+check(chart.success && ['#38bdf8', '#f97316', '#22c55e', '#e2e8f0'].every((h) => hexes.includes(h)) && !hexes.includes('#000000') && !hexes.includes('#8c8c8c'), `chart colours per series + light axes/legend: ${hexes.join(' ')}`);
+
 const native = design.outputs?.find((o) => o.format === 'vectorcraft')?.path;
 const info = await call('get_vector_info', { input_path: native });
 check(info.success && info.artboards?.[0]?.rect?.[2] === 800 && info.info?.title === 'Póster e2e' && Object.keys(info.kinds ?? {}).length >= 3, `info: ${JSON.stringify(info.kinds)}`);

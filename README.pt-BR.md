@@ -78,7 +78,8 @@ As coordenadas são **pontos a partir do canto superior esquerdo da prancheta** 
   "background": "#ff6a00",
   "elements": [
     { "type": "star", "cx": 540, "cy": 420, "radius1": 260, "radius2": 120, "fill": "#ffd23f", "effects": [ { "effect": "stylize.dropShadow" } ] },
-    { "type": "text", "text": "PROMO", "x": 300, "y": 880, "size": 180, "color": "#ffffff" }
+    { "type": "text", "text": "PROMO", "x": 300, "y": 880, "size": 180, "color": "#ffffff" },
+    { "type": "chart", "chart_type": "column", "x": 640, "y": 900, "width": 380, "height": 160, "csv": ",2025,2026\nQ1,12,18\nQ2,15,24", "colors": ["#ffffff", "#ffd23f"], "text_color": "#ffffff" }
   ],
   "formats": ["svg", "png", "vectorcraft"],
   "output_dir": "/home/eu/designs"
@@ -140,7 +141,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + bundle de arquivo único (dist/bundle.cjs)
 npm test            # testes unitários (lógica de caminhos de Windows, macOS e Linux)
-npm run test:e2e    # 17 testes de ponta a ponta via MCP stdio real (PNGs e designs sintéticos)
+npm run test:e2e    # 18 testes de ponta a ponta via MCP stdio real (PNGs e designs sintéticos)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 ```
 

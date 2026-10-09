@@ -78,7 +78,8 @@
   "background": "#ff6a00",
   "elements": [
     { "type": "star", "cx": 540, "cy": 420, "radius1": 260, "radius2": 120, "fill": "#ffd23f", "effects": [ { "effect": "stylize.dropShadow" } ] },
-    { "type": "text", "text": "促销", "x": 360, "y": 880, "size": 180, "color": "#ffffff" }
+    { "type": "text", "text": "促销", "x": 360, "y": 880, "size": 180, "color": "#ffffff" },
+    { "type": "chart", "chart_type": "column", "x": 640, "y": 900, "width": 380, "height": 160, "csv": ",2025,2026\nQ1,12,18\nQ2,15,24", "colors": ["#ffffff", "#ffd23f"], "text_color": "#ffffff" }
   ],
   "formats": ["svg", "png", "vectorcraft"],
   "output_dir": "/home/me/designs"
@@ -140,7 +141,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + 单文件打包（dist/bundle.cjs）
 npm test            # 单元测试（Windows、macOS、Linux 路径逻辑）
-npm run test:e2e    # 通过真实 MCP stdio 的 17 项端到端检查（合成 PNG 和设计）
+npm run test:e2e    # 通过真实 MCP stdio 的 18 项端到端检查（合成 PNG 和设计）
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 ```
 

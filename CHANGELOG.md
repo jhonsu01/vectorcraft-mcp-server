@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.1] - 2026-10-09
+### Added
+- Chart colours in `create_design` and `edit_vector` (`add`): `colors` gives one colour per series in the order of
+  the CSV header (bars, slices, lines, areas and their legend swatches), `text_color` colours the axes, tick and
+  category labels and the legend text, so charts read well on dark backgrounds. Works for column, bar, stacked,
+  line, area, pie, scatter and radar charts; each series is recoloured inside its own group, so the first series'
+  black never touches the labels.
+- CSV series names honour quotes (`,"Costs, net",Sales`).
+### Verified
+- Windows 11 and Debian 12 (Docker): 18/18 end-to-end checks each (new: per-series chart colours on a dark background).
+
 ## [1.0.0] - 2026-10-09
 ### Added
 - MCP server on VectorCraft's own engine (`vectorcraft-cli mcp --headless`): one private, headless engine per

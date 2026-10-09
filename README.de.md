@@ -78,7 +78,8 @@ Koordinaten sind **Punkt ab der oberen linken Ecke der Zeichenfläche** (1 px = 
   "background": "#ff6a00",
   "elements": [
     { "type": "star", "cx": 540, "cy": 420, "radius1": 260, "radius2": 120, "fill": "#ffd23f", "effects": [ { "effect": "stylize.dropShadow" } ] },
-    { "type": "text", "text": "SALE", "x": 330, "y": 880, "size": 180, "color": "#ffffff" }
+    { "type": "text", "text": "SALE", "x": 330, "y": 880, "size": 180, "color": "#ffffff" },
+    { "type": "chart", "chart_type": "column", "x": 640, "y": 900, "width": 380, "height": 160, "csv": ",2025,2026\nQ1,12,18\nQ2,15,24", "colors": ["#ffffff", "#ffd23f"], "text_color": "#ffffff" }
   ],
   "formats": ["svg", "png", "vectorcraft"],
   "output_dir": "/home/ich/designs"
@@ -140,7 +141,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + Einzeldatei-Bundle (dist/bundle.cjs)
 npm test            # Unit-Tests (Pfadlogik für Windows, macOS und Linux)
-npm run test:e2e    # 17 End-to-End-Prüfungen über echtes MCP stdio (synthetische PNGs und Designs)
+npm run test:e2e    # 18 End-to-End-Prüfungen über echtes MCP stdio (synthetische PNGs und Designs)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 ```
 

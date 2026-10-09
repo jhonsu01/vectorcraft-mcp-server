@@ -6,6 +6,7 @@ import { cleanEnv, resolveInstall, resolveInt } from '../../src/config.js';
 import { resolveOutputPath, sameFile, toEnginePath } from '../../src/paths.js';
 import { substitute } from '../../src/tools/advanced.js';
 import { RASTER_INPUTS, collectInputs, formatOfPath } from '../../src/tools/common.js';
+import { seriesNames } from '../../src/tools/vector.js';
 
 describe('config', () => {
   it('treats unfilled MCPB placeholders as unset', () => {
@@ -65,3 +66,13 @@ describe('run_vector_commands references', () => {
     expect(() => substitute('$steps[3].id', [])).toThrow();
   });
 });
+
+describe('chart series', () => {
+  it('reads series names from the CSV header, honouring quotes', () => {
+    expect(seriesNames(',Ventas,Costos\nEne,1,2')).toEqual(['Ventas', 'Costos']);
+    expect(seriesNames(',"A, B",C\r\nx,1,2')).toEqual(['A, B', 'C']);
+    expect(seriesNames(',"Dicho ""x""",Y')).toEqual(['Dicho "x"', 'Y']);
+    expect(seriesNames(',Solo')).toEqual(['Solo']);
+  });
+});
+

@@ -46,6 +46,12 @@ export const elementSchema = z.object({
   image_path: z.string().optional().describe('image: absolute PNG, JPEG, SVG, PDF, EPS... path, fitted into x/y/width/height (aspect kept) or centred.'),
   chart_type: z.enum(['column', 'stackedColumn', 'bar', 'stackedBar', 'line', 'area', 'scatter', 'pie', 'radar']).optional(),
   csv: z.string().optional().describe('chart data: first row an empty cell then series names; then one row per category, e.g. ",Sales\\nJan,10\\nFeb,25".'),
+  colors: z
+    .array(z.string())
+    .max(64)
+    .optional()
+    .describe('chart: one "#rrggbb" per series, in the order of the CSV header (default: black and greys). Also colours the legend swatches.'),
+  text_color: z.string().optional().describe('chart: colour of the axes, tick and category labels and legend text (default black; use a light colour on dark backgrounds).'),
   opacity: z.number().min(0).max(100).optional(),
   effects: z.array(effectSchema).max(20).optional().describe('Live effects on this element.'),
 });
@@ -63,6 +69,85 @@ function paint(el: Element, kind: 'shape' | 'line'): Record<string, unknown> {
 function need(el: Element, ...keys: (keyof Element)[]): void {
   const missing = keys.filter((k) => el[k] === undefined);
   if (missing.length) throw new Error(`${el.type} needs ${missing.join(', ')}.`);
+}
+
+/** Series names from a chart CSV header (`,Sales,"Costs, net"` → ["Sales", "Costs, net"]); quotes are honoured. */
+export function seriesNames(csv: string): string[] {
+  const header = csv.split(/\r?\n/)[0] ?? '';
+  const cells: string[] = [];
+  let cur = '';
+  let quoted = false;
+  for (let i = 0; i < header.length; i++) {
+    const ch = header[i];
+    if (quoted) {
+      if (ch === '"' && header[i + 1] === '"') {
+        cur += '"';
+        i++;
+      } else if (ch === '"') quoted = false;
+      else cur += ch;
+    } else if (ch === '"') quoted = true;
+    else if (ch === ',') {
+      cells.push(cur.trim());
+      cur = '';
+    } else cur += ch;
+  }
+  cells.push(cur.trim());
+  return cells.slice(1);
+}
+
+interface Node {
+  id: number;
+  name?: string;
+  kind?: string;
+  children?: Node[];
+}
+
+function findNode(nodes: Node[], id: number): Node | undefined {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    const hit = findNode(n.children ?? [], id);
+    if (hit) return hit;
+  }
+  return undefined;
+}
+
+/**
+ * A VectorCraft graph is a group with one subgroup per series (bars / slices / line plus its legend swatch),
+ * a "Legend" group (the series names) and an "Axes" group (a pie has loose category labels instead).
+ * Series are drawn black, #8c8c8c, #cccccc...: recolour each series subgroup on its own, so the first
+ * series' black never reaches the axes and labels, which take text_color instead.
+ */
+async function colorChart(s: VectorCraftSession, graphId: number, names: string[], colors: string[], textColor?: string): Promise<void> {
+  const doc = await s.json('inspect_document', { depth: 4, childLimit: 500 });
+  const graph = findNode((doc['layers'] ?? []) as Node[], graphId);
+  if (!graph) throw new Error(`chart ${graphId} not found after creating it.`);
+  const kids = graph.children ?? [];
+  // series subgroups in header order: by name, else by position (children are listed front to back)
+  const groups = kids.filter((k) => k.kind === 'Group' && k.name !== 'Legend' && k.name !== 'Axes');
+  const byOrder = [...groups].reverse();
+  const seriesIds = names.map((n, i) => (groups.find((g) => g.name === n) ?? byOrder[i])?.id);
+  const recolor = async (id: number, to: (hex: string) => string | undefined) => {
+    await s.json('run_command', { command: 'select.set', params: { ids: [id] } });
+    const used = ((await s.json('run_command', { command: 'recolor.colors' }))['colors'] ?? []) as { hex: string }[];
+    const map: Record<string, string> = {};
+    for (const c of used) {
+      const t = to(c.hex.toLowerCase());
+      if (t) map[c.hex] = t;
+    }
+    if (Object.keys(map).length) await s.json('run_command', { command: 'recolor.apply', params: { map } });
+  };
+  for (let i = 0; i < seriesIds.length && i < colors.length; i++) {
+    const id = seriesIds[i];
+    // white is the separator stroke of pie slices and areas: keep it
+    if (id !== undefined) await recolor(id, (hex) => (hex === '#ffffff' ? undefined : colors[i]));
+  }
+  if (textColor) {
+    for (const k of kids) {
+      if (seriesIds.includes(k.id)) continue;
+      await recolor(k.id, (hex) => (hex === '#000000' ? textColor : undefined));
+    }
+  }
+  await s.json('run_command', { command: 'select.none' }).catch(() => undefined);
 }
 
 /** Draw one element in the active document; returns its object id(s). */
@@ -124,6 +209,7 @@ export async function addElement(s: VectorCraftSession, el: Element): Promise<{ 
       need(el, 'x', 'y', 'width', 'height', 'csv');
       const r = await s.json('create_graph', { type: el.chart_type ?? 'column', x: el.x, y: el.y, width: el.width, height: el.height, csv: el.csv });
       ids = [r['id']];
+      if (el.colors?.length || el.text_color) await colorChart(s, r['id'], seriesNames(el.csv!), el.colors ?? [], el.text_color);
       break;
     }
   }
