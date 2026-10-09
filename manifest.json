@@ -1,0 +1,72 @@
+{
+  "manifest_version": "0.3",
+  "name": "vectorcraft-mcp-server",
+  "version": "1.0.0",
+  "display_name": "VectorCraft Bridge",
+  "description": "Vectorize images, convert between SVG, PDF, AI, EPS, DXF, PNG and more, create and recolor vector designs with shapes, text, charts and effects, using the VectorCraft editor installed on Windows, macOS or Linux. Not affiliated with VectorCraft or Storytold.",
+  "long_description": "VectorCraft Bridge lets Claude work on vector artwork with the VectorCraft you already have installed on Windows, macOS or Linux (tested with 0.7.0), the open-source, Illustrator-class editor written in Rust.\n\n- **Vectorize**: turn PNG / JPEG / TIFF / WebP images into clean vector art with Image Trace presets (logos, photos, line art, silhouettes) or your own colours, threshold, path and corner settings.\n- **Convert**: read SVG, PDF, AI, EPS, DXF, EMF, WMF, .vectorcraft and bitmaps; write SVG, PDF, EPS, DXF, EMF, WMF, PNG, JPEG, WebP, GIF, TIFF, BMP, TGA, PSD with layers and more, several formats at once, one file per artboard.\n- **Create**: documents of any size or preset with rectangles, ellipses, polygons, stars, lines, SVG paths, text, placed images and charts (column, bar, line, area, pie, radar), with fills, strokes, opacity and live effects (drop shadow, glow, roughen, warp, blur...).\n- **Edit**: recolor by mapping colours, reduce colours, transform, apply effects, outline text, add elements, fit the artboard, set metadata.\n- **Preview** any file, and run any of VectorCraft's 685 commands.\n\nThe connector drives VectorCraft's own headless engine (vectorcraft-cli) and never touches an open VectorCraft window unless you ask. Everything runs locally with no network access; files are never overwritten unless you ask. VectorCraft is an open-source project by Storytold; this connector is not affiliated with or endorsed by them.",
+  "author": {
+    "name": "Jhon Supelano",
+    "url": "https://github.com/jhonsu01"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jhonsu01/vectorcraft-mcp-server.git"
+  },
+  "homepage": "https://github.com/jhonsu01/vectorcraft-mcp-server",
+  "support": "https://github.com/jhonsu01/vectorcraft-mcp-server/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "node",
+    "entry_point": "dist/bundle.cjs",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/dist/bundle.cjs"],
+      "env": {
+        "VECTORCRAFT_DIR": "${user_config.vectorcraft_dir}",
+        "VECTORCRAFT_CLI": "${user_config.vectorcraft_cli}",
+        "VECTORCRAFT_CONTROL_PORT": "${user_config.control_port}"
+      }
+    }
+  },
+  "user_config": {
+    "vectorcraft_dir": {
+      "type": "directory",
+      "title": "VectorCraft folder",
+      "description": "Install folder of VectorCraft (or VectorCraft.app on macOS). Leave empty to auto-detect: C:\\Program Files\\VectorCraft, /Applications/VectorCraft.app, /usr/bin, /opt/vectorcraft or PATH.",
+      "required": false
+    },
+    "vectorcraft_cli": {
+      "type": "file",
+      "title": "vectorcraft-cli executable (optional)",
+      "description": "Only if it is somewhere else, e.g. where you unzipped vectorcraft-cli-<version>-macos-universal.zip on macOS.",
+      "required": false
+    },
+    "control_port": {
+      "type": "string",
+      "title": "VectorCraft control port (optional)",
+      "description": "Port used to drive the VectorCraft app (run_vector_commands live). Default 7979.",
+      "required": false
+    }
+  },
+  "compatibility": {
+    "platforms": ["win32", "darwin", "linux"],
+    "runtimes": {
+      "node": ">=20.0.0"
+    }
+  },
+  "tools": [
+    { "name": "get_vector_info", "description": "Artboards, colour mode, units, object counts, fonts, metadata" },
+    { "name": "convert_vector", "description": "Convert between 20 vector and raster formats, per artboard" },
+    { "name": "vectorize_image", "description": "Image Trace bitmaps into SVG, PDF, EPS..." },
+    { "name": "create_design", "description": "New artwork from shapes, paths, text, images, charts and effects" },
+    { "name": "edit_vector", "description": "Recolor, reduce colours, transform, effects, outlines, add elements" },
+    { "name": "render_preview", "description": "Render an artboard to PNG and show it" },
+    { "name": "list_vector_catalog", "description": "Commands, effects, trace presets, document presets, formats" },
+    { "name": "run_vector_commands", "description": "Run any VectorCraft engine tools, headless or in the live app" },
+    { "name": "open_in_vectorcraft", "description": "Open files in the VectorCraft app" },
+    { "name": "get_vectorcraft_status", "description": "Check the VectorCraft installation and version" }
+  ],
+  "keywords": ["vectorcraft", "vector", "svg", "illustrator", "image-trace", "vectorize", "eps", "dxf", "pdf", "windows", "macos", "linux"],
+  "license": "Apache-2.0"
+}

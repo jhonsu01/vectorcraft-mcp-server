@@ -1,0 +1,21 @@
+# Changelog
+
+## [1.0.0] - 2026-10-09
+### Added
+- MCP server on VectorCraft's own engine (`vectorcraft-cli mcp --headless`): one private, headless engine per
+  job, so it never edits a VectorCraft window that is open; calls sent one at a time so object ids carry over.
+- 10 tools: `vectorize_image` (Image Trace with presets or mode / colours / threshold / paths / corners / noise /
+  transparent background, single image or folder), `convert_vector` (20 readable and 19 writable formats, several
+  at once, one file per artboard), `create_design` (background, shapes, SVG paths, text, placed images, charts,
+  fill / stroke / opacity, live effects), `edit_vector` (recolor, reduce colours, transform, effects, text to
+  outlines, add elements, fit artboard, metadata, list colours), `render_preview`, `get_vector_info`,
+  `list_vector_catalog` (685 commands, 51 effects, trace and document presets), `run_vector_commands` (any engine
+  tool, `$steps` references, headless or live), `open_in_vectorcraft`, `get_vectorcraft_status`.
+- Windows, macOS and Linux install detection (Program Files, deb/rpm in /usr/bin, tar.gz in /opt/vectorcraft/bin,
+  VectorCraft.app plus the CLI zip, PATH); `VECTORCRAFT_DIR`, `VECTORCRAFT_CLI`, `VECTORCRAFT_APP`,
+  `VECTORCRAFT_CONTROL_PORT` settings.
+- Input schemas use plain arrays only (no JSON Schema tuples).
+- README in 9 languages.
+### Verified
+- Windows 11 and Debian 12 (Docker, headless, VectorCraft 0.7.0 tar.gz): 17/17 end-to-end checks each.
+  macOS is supported by the same code paths but not yet tested on a Mac.

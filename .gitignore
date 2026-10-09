@@ -1,0 +1,34 @@
+node_modules/
+dist/
+*.mcpb
+.tmp/
+*.tsbuildinfo
+.env
+.env.*
+.codegraph/
+
+# Personal media: never publish anything from this folder
+pruebas/
+
+# Personal documents and engine outputs
+.vectorcraft-staging-*/
+*.mp4
+*.gif
+*.wav
+*.pdf
+*.svg
+*.svgz
+*.eps
+*.ai
+*.dxf
+*.emf
+*.wmf
+*.psd
+*.vectorcraft
+*.jpg
+*.jpeg
+*.webp
+*.tif
+*.tiff
+*.png
+!icon.png
