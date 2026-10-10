@@ -99,6 +99,14 @@
 2. 双击它（或拖到 Claude Desktop → *设置 → 扩展*），然后点击 **安装**。
 3. 可选：如果 VectorCraft 不在标准位置，请在扩展设置中填写它的文件夹或 `vectorcraft-cli` 的路径。
 
+### Codex（OpenAI）
+
+**推荐 —— 插件市场（可获得更新）：** *插件 → 添加 → 添加插件市场*，来源 `jhonsu01/craft-marketplace`，引用 `main`，然后从 **Craft Bridges** 安装 **VectorCraft Bridge**（[craft-marketplace](https://github.com/jhonsu01/craft-marketplace)）。刷新插件市场即可获得新版本。或者上传 zip（Codex 会把它保存在你的账户中，并拒绝同名的新版 zip）：
+
+1. 从[最新发布](https://github.com/jhonsu01/vectorcraft-mcp-server/releases/latest)下载 `vectorcraft-mcp-server-<版本>-codex.zip`。
+2. 在 Codex 中：*插件 → 添加 → 新插件*，选择该 zip，然后点击 **添加插件**。
+3. Codex 用 `node` 启动服务器，因此 `PATH` 中必须有 Node.js ≥ 20。如果 VectorCraft 不在标准位置，请把 `VECTORCRAFT_DIR` 或 `VECTORCRAFT_CLI` 设为系统环境变量（Codex 没有本地插件的设置表单）。
+
 ### Claude Code / 其他 MCP 客户端
 
 ```bash
@@ -143,6 +151,7 @@ npm run build       # TypeScript + 单文件打包（dist/bundle.cjs）
 npm test            # 单元测试（Windows、macOS、Linux 路径逻辑）
 npm run test:e2e    # 通过真实 MCP stdio 的 19 项端到端检查（合成 PNG 和设计）
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
+npm run pack:codex  # Codex 插件 zip
 ```
 
 在 Docker 中测试 Linux（先解压 `vectorcraft-<版本>-linux-x86_64.tar.gz`）：

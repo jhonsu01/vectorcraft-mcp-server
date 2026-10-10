@@ -99,6 +99,14 @@ Coordinates are **points from the top-left of the artboard** (1 px = 1 pt).
 2. Double-click it (or drag it onto Claude Desktop → *Settings → Extensions*) and click **Install**.
 3. Optional: if VectorCraft is not in a standard place, set its folder or the `vectorcraft-cli` path in the extension settings.
 
+### Codex (OpenAI)
+
+**Recommended — the marketplace (gets updates):** *Plugins → Add → Add marketplace*, source `jhonsu01/craft-marketplace`, reference `main`, then install **VectorCraft Bridge** from **Craft Bridges** ([craft-marketplace](https://github.com/jhonsu01/craft-marketplace)). New versions arrive by refreshing the marketplace. Or upload the zip (Codex then keeps it in your account and refuses a newer zip with the same name):
+
+1. Download `vectorcraft-mcp-server-<version>-codex.zip` from the [latest release](https://github.com/jhonsu01/vectorcraft-mcp-server/releases/latest).
+2. In Codex: *Plugins → Add → New plugin*, choose the zip and click **Add plugin**.
+3. Codex starts the server with `node`, so Node.js ≥ 20 must be on `PATH`. If VectorCraft is not in a standard location, set `VECTORCRAFT_DIR` or `VECTORCRAFT_CLI` as system environment variables (Codex has no settings form for local plugins).
+
 ### Claude Code / other MCP clients
 
 ```bash
@@ -143,6 +151,7 @@ npm run build       # TypeScript + single-file bundle (dist/bundle.cjs)
 npm test            # unit tests (Windows, macOS and Linux path logic)
 npm run test:e2e    # 19 end-to-end checks over real MCP stdio (synthetic PNGs and designs)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
+npm run pack:codex  # Codex plugin zip
 ```
 
 Linux check in Docker (unpack `vectorcraft-<version>-linux-x86_64.tar.gz` first):

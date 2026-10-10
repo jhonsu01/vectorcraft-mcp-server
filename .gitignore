@@ -32,3 +32,4 @@ pruebas/
 *.tiff
 *.png
 !icon.png
+*.zip

@@ -1,6 +1,6 @@
 {
   "name": "vectorcraft-mcp-server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "MCP server for VectorCraft: vectorize images, convert between 20 vector and raster formats, design with shapes, text, effects and charts, recolor and export artwork with VectorCraft's own engine, from Claude (Windows, macOS, Linux).",
   "type": "module",
   "main": "dist/index.js",
@@ -15,7 +15,8 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:e2e": "node scripts/e2e.mjs",
-    "pack:mcpb": "npm run build && npx -y @anthropic-ai/mcpb pack . vectorcraft-mcp-server.mcpb"
+    "pack:mcpb": "npm run build && npx -y @anthropic-ai/mcpb pack . vectorcraft-mcp-server.mcpb",
+    "pack:codex": "npm run build && node scripts/pack-codex.mjs"
   },
   "keywords": [
     "mcp",
@@ -55,5 +56,15 @@
     "esbuild": "^0.28.2",
     "typescript": "^5.9.3",
     "vitest": "^5.0.3"
+  },
+  "codex": {
+    "shortDescription": "Vectorize images and create vector art with your local VectorCraft",
+    "category": "Design",
+    "brandColor": "#059669",
+    "defaultPrompt": [
+      "Vectorize this logo to SVG with clean shapes",
+      "Convert these AI and EPS files to SVG and PDF",
+      "Create a bar chart as an SVG from this data"
+    ]
   }
 }

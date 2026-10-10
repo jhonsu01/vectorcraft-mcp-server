@@ -99,6 +99,14 @@
 2. ダブルクリック（または Claude Desktop → *設定 → 拡張機能* にドラッグ）して **インストール** をクリックします。
 3. 任意：VectorCraft が標準の場所にない場合は、拡張機能の設定でフォルダーか `vectorcraft-cli` のパスを指定します。
 
+### Codex（OpenAI）
+
+**推奨 — マーケットプレイス（更新を受け取れます）：** *プラグイン → 追加 → マーケットプレイスを追加* で、ソースに `jhonsu01/craft-marketplace`、参照に `main` を指定し、**Craft Bridges** から **VectorCraft Bridge** をインストールします（[craft-marketplace](https://github.com/jhonsu01/craft-marketplace)）。新しいバージョンはマーケットプレイスの更新で届きます。または zip をアップロードします（Codex はアカウントに保存し、同じ名前の新しい zip を拒否します）：
+
+1. [最新リリース](https://github.com/jhonsu01/vectorcraft-mcp-server/releases/latest)から `vectorcraft-mcp-server-<バージョン>-codex.zip` をダウンロードします。
+2. Codex で *プラグイン → 追加 → 新しいプラグイン* を開き、zip を選んで **プラグインを追加** をクリックします。
+3. Codex はサーバーを `node` で起動するため、`PATH` に Node.js ≥ 20 が必要です。VectorCraft が標準の場所にない場合は、`VECTORCRAFT_DIR` または `VECTORCRAFT_CLI` をシステムの環境変数として設定してください（Codex にはローカルプラグイン用の設定画面がありません）。
+
 ### Claude Code / その他の MCP クライアント
 
 ```bash
@@ -143,6 +151,7 @@ npm run build       # TypeScript + 単一ファイルバンドル（dist/bundle.
 npm test            # 単体テスト（Windows・macOS・Linux のパス処理）
 npm run test:e2e    # 実際の MCP stdio を通した 19 項目のエンドツーエンド検証（合成 PNG とデザイン）
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
+npm run pack:codex  # Codex 用プラグイン zip
 ```
 
 Docker での Linux 検証（先に `vectorcraft-<バージョン>-linux-x86_64.tar.gz` を展開）：
