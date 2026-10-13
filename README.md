@@ -149,7 +149,7 @@ claude mcp add vectorcraft -- node "$PWD/dist/bundle.cjs"
 ```bash
 npm run build       # TypeScript + single-file bundle (dist/bundle.cjs)
 npm test            # unit tests (Windows, macOS and Linux path logic)
-npm run test:e2e    # 19 end-to-end checks over real MCP stdio (synthetic PNGs and designs)
+npm run test:e2e    # 20 end-to-end checks over real MCP stdio (synthetic PNGs and designs)
 npm run pack:mcpb   # vectorcraft-mcp-server.mcpb
 npm run pack:codex  # Codex plugin zip
 ```

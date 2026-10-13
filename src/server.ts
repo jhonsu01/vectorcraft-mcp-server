@@ -4,6 +4,7 @@ import { fileURLToPath } from 'url';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { registerAdvancedTools } from './tools/advanced.js';
 import { registerVectorTools } from './tools/vector.js';
+import { LINK_INSTRUCTIONS } from './links.js';
 
 /** serverInfo.version comes from package.json (reachable as ../package.json from dist/ and src/). */
 export function readPackageVersion(): string {
@@ -27,7 +28,9 @@ export function createServer(): McpServer {
         'create designs from shapes, paths, text, images, charts and live effects, recolor and transform existing art, and preview it. ' +
         'Coordinates are points from the top-left of the artboard (1 px = 1 pt). All paths must be absolute; files are never ' +
         'overwritten unless overwrite is true. The engine runs headless and never touches an open VectorCraft window unless live=true. ' +
-        'list_vector_catalog lists the 685 commands and 51 effects; run_vector_commands runs any of them.',
+        'list_vector_catalog lists the 685 commands and 51 effects; run_vector_commands runs any of them.' +
+        ' ' +
+        LINK_INSTRUCTIONS,
     },
   );
   registerVectorTools(server);
