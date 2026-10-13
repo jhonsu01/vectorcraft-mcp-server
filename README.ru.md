@@ -107,6 +107,12 @@
 2. В Codex: *Плагины → Добавить → Новый плагин*, выберите zip и нажмите **Добавить плагин**.
 3. Codex запускает сервер через `node`, поэтому Node.js ≥ 20 должен быть в `PATH`. Если VectorCraft установлен не в стандартное место, задайте `VECTORCRAFT_DIR` или `VECTORCRAFT_CLI` как системные переменные окружения (у Codex нет формы настроек для локальных плагинов).
 
+### DeepSeek Harness
+
+1. *Plugins → Add plugin*, введите `github:jhonsu01/craft-marketplace#path:/plugins/vectorcraft-mcp-server` и нажмите **Install**, затем **Enable now**.
+2. Harness запускает сервер через свой MCP-клиент и `node` (Node.js ≥ 20 в `PATH`); инструменты появляются как `mcp__vectorcraft__<инструмент>`, а выходные файлы — как карточки, которые открываются в Harness.
+3. Harness пока не обновляет плагины сам: чтобы обновить, удалите плагин и установите его снова по тому же адресу.
+
 ### Claude Code / другие MCP-клиенты
 
 ```bash
